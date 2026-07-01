@@ -1,8 +1,13 @@
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form, Depends
+from sqlalchemy.orm import Session
+import json
+
 from app.services.skill_analyzer import extract_skills
-from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.text_extractor import extract_text_from_file
 from app.services.resume_analyzer import calculate_resume_score
-from fastapi import APIRouter, UploadFile, File, HTTPException, Form
+from app.core.database import get_db
+from app.models.analysis import ResumeAnalysis
+
 
 router = APIRouter(
     prefix="/resume",
@@ -18,7 +23,10 @@ def get_resume():
 
 
 @router.post("/upload")
-async def upload_resume(file: UploadFile = File(...)):
+async def upload_resume(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
     allowed_types = [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -34,7 +42,23 @@ async def upload_resume(file: UploadFile = File(...)):
     skills = extract_skills(extracted_text)
     analysis = calculate_resume_score(skills, extracted_text)
 
+    analysis_record = ResumeAnalysis(
+        filename=file.filename,
+        content_type=file.content_type,
+        text_length=len(extracted_text),
+        detected_skills=json.dumps(skills),
+        ats_score=analysis["score"],
+        strengths=json.dumps(analysis["strengths"]),
+        weaknesses=json.dumps(analysis["weaknesses"]),
+        recommendations=json.dumps(analysis["recommendations"])
+    )
+
+    db.add(analysis_record)
+    db.commit()
+    db.refresh(analysis_record)
+
     return {
+        "analysis_id": analysis_record.id,
         "filename": file.filename,
         "content_type": file.content_type,
         "text_length": len(extracted_text),
@@ -45,8 +69,10 @@ async def upload_resume(file: UploadFile = File(...)):
         "weaknesses": analysis["weaknesses"],
         "recommendations": analysis["recommendations"],
         "preview": extracted_text[:500],
-        "message": "Resume analyzed successfully."
+        "message": "Resume analyzed and saved successfully."
     }
+
+
 @router.post("/match-job")
 async def match_resume_with_job(
     file: UploadFile = File(...),
@@ -90,4 +116,74 @@ async def match_resume_with_job(
         "match_percentage": match_percentage,
         "recommendations": recommendations[:8],
         "message": "Resume matched with job description successfully."
+    }
+@router.get("/history")
+def get_analysis_history(db: Session = Depends(get_db)):
+    analyses = db.query(ResumeAnalysis).order_by(
+        ResumeAnalysis.created_at.desc()
+    ).all()
+
+    history = []
+
+    for analysis in analyses:
+        history.append({
+            "id": analysis.id,
+            "filename": analysis.filename,
+            "ats_score": analysis.ats_score,
+            "created_at": analysis.created_at,
+            "text_length": analysis.text_length
+        })
+
+    return {
+        "total": len(history),
+        "history": history
+    }
+@router.get("/history/{analysis_id}")
+def get_analysis_by_id(
+    analysis_id: int,
+    db: Session = Depends(get_db)
+):
+    analysis = db.query(ResumeAnalysis).filter(
+        ResumeAnalysis.id == analysis_id
+    ).first()
+
+    if not analysis:
+        raise HTTPException(
+            status_code=404,
+            detail="Analysis not found."
+        )
+
+    return {
+        "id": analysis.id,
+        "filename": analysis.filename,
+        "content_type": analysis.content_type,
+        "text_length": analysis.text_length,
+        "detected_skills": json.loads(analysis.detected_skills),
+        "ats_score": analysis.ats_score,
+        "strengths": json.loads(analysis.strengths),
+        "weaknesses": json.loads(analysis.weaknesses),
+        "recommendations": json.loads(analysis.recommendations),
+        "created_at": analysis.created_at
+    }
+@router.delete("/history/{analysis_id}")
+def delete_analysis(
+    analysis_id: int,
+    db: Session = Depends(get_db)
+):
+    analysis = db.query(ResumeAnalysis).filter(
+        ResumeAnalysis.id == analysis_id
+    ).first()
+
+    if not analysis:
+        raise HTTPException(
+            status_code=404,
+            detail="Analysis not found."
+        )
+
+    db.delete(analysis)
+    db.commit()
+
+    return {
+        "message": "Analysis deleted successfully.",
+        "deleted_id": analysis_id
     }
