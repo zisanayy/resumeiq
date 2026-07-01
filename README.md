@@ -1,2 +1,2 @@
 # resumeiq
-AI-powered Resume Analyzer built with FastAPI, React and Machine Learning.
+AI-powered Resume Analyzer using FastAPI, NLP and Machine Learning.
