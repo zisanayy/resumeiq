@@ -42,6 +42,43 @@ async def upload_resume(
     skills = extract_skills(extracted_text)
     analysis = calculate_resume_score(skills, extracted_text)
 
+    normalized_skills = {
+        skill.strip().lower()
+        for skill in skills
+    }
+
+    suggestion_candidates = [
+        ("Docker", "docker"),
+        ("PostgreSQL", "postgresql"),
+        ("AWS", "aws"),
+        ("CI/CD", "ci/cd"),
+        ("GitHub", "github"),
+        ("Kubernetes", "kubernetes"),
+    ]
+
+    suggested_skills = [
+        display_name
+        for display_name, normalized_name in suggestion_candidates
+        if normalized_name not in normalized_skills
+    ]
+
+    if analysis["score"] >= 80:
+        overall_feedback = (
+            "This resume demonstrates strong technical skills and a solid "
+            "backend and AI profile. It is a strong candidate resume, "
+            "especially for Python, FastAPI and machine learning related roles."
+        )
+    elif analysis["score"] >= 50:
+        overall_feedback = (
+            "This resume has a good foundation, but it can be improved by "
+            "adding more technical skills, projects and measurable achievements."
+        )
+    else:
+        overall_feedback = (
+            "This resume needs improvement. Add more relevant skills, projects, "
+            "experience details and stronger technical keywords."
+        )
+
     analysis_record = ResumeAnalysis(
         filename=file.filename,
         content_type=file.content_type,
@@ -68,6 +105,8 @@ async def upload_resume(
         "strengths": analysis["strengths"],
         "weaknesses": analysis["weaknesses"],
         "recommendations": analysis["recommendations"],
+        "suggested_skills": suggested_skills,
+        "overall_feedback": overall_feedback,
         "preview": extracted_text[:500],
         "message": "Resume analyzed and saved successfully."
     }
@@ -94,13 +133,20 @@ async def match_resume_with_job(
     resume_skills = extract_skills(extracted_text)
     job_skills = extract_skills(job_description)
 
-    matched_skills = sorted(set(resume_skills).intersection(set(job_skills)))
-    missing_skills = sorted(set(job_skills).difference(set(resume_skills)))
+    matched_skills = sorted(
+        set(resume_skills).intersection(set(job_skills))
+    )
+
+    missing_skills = sorted(
+        set(job_skills).difference(set(resume_skills))
+    )
 
     if len(job_skills) == 0:
         match_percentage = 0
     else:
-        match_percentage = round((len(matched_skills) / len(job_skills)) * 100)
+        match_percentage = round(
+            (len(matched_skills) / len(job_skills)) * 100
+        )
 
     recommendations = [
         f"Consider adding or improving your experience with {skill}."
@@ -117,6 +163,8 @@ async def match_resume_with_job(
         "recommendations": recommendations[:8],
         "message": "Resume matched with job description successfully."
     }
+
+
 @router.get("/history")
 def get_analysis_history(db: Session = Depends(get_db)):
     analyses = db.query(ResumeAnalysis).order_by(
@@ -138,6 +186,8 @@ def get_analysis_history(db: Session = Depends(get_db)):
         "total": len(history),
         "history": history
     }
+
+
 @router.get("/history/{analysis_id}")
 def get_analysis_by_id(
     analysis_id: int,
@@ -165,6 +215,8 @@ def get_analysis_by_id(
         "recommendations": json.loads(analysis.recommendations),
         "created_at": analysis.created_at
     }
+
+
 @router.delete("/history/{analysis_id}")
 def delete_analysis(
     analysis_id: int,
