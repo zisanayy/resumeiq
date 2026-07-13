@@ -11,70 +11,78 @@
 ![Vercel](https://img.shields.io/badge/Frontend-Vercel-black?logo=vercel)
 ![Render](https://img.shields.io/badge/Backend-Render-46E3B7)
 
-> AI-powered resume analysis and job-matching platform built with FastAPI and React.
+> **AI-powered Resume Analyzer** built with **React**, **FastAPI**, and **Python**.
 
-ResumeIQ analyzes PDF and DOCX resumes, calculates ATS scores, detects technical skills, compares resumes with job descriptions, and provides actionable recommendations.
-
----
-
-## 🌐 Live Demo
-
-- **Frontend:** https://resumeiq-mu.vercel.app
-- **Backend API:** https://resumeiq-5e2z.onrender.com
-- **API Documentation:** https://resumeiq-5e2z.onrender.com/docs
-
-> The backend uses Render’s free plan, so the first request may take 30–60 seconds while the service wakes up.
+ResumeIQ helps job seekers analyze resumes, calculate ATS scores, detect technical skills, compare resumes with job descriptions, and receive actionable recommendations for improvement.
 
 ---
 
-## 📸 Screenshots
+# 🌐 Live Demo
 
-### Home
+**Frontend**
 
-![Home](images/hero.png)
+https://resumeiq-mu.vercel.app
 
-### Dashboard
+**Backend API**
+
+https://resumeiq-5e2z.onrender.com
+
+**API Documentation**
+
+https://resumeiq-5e2z.onrender.com/docs
+
+> ⚠️ The backend runs on Render's free plan, so the first request may take **30–60 seconds** while the server wakes up.
+
+---
+
+# 📸 Screenshots
+
+## 📊 Dashboard
 
 ![Dashboard](images/dashboard.png)
 
-### Resume Analyzer
+---
+
+## 📄 Resume Analyzer
 
 ![Resume Analyzer](images/resume-analyzer.png)
 
-### Job Matcher
+---
+
+## 💼 Job Matcher
 
 ![Job Matcher](images/job-matcher.png)
 
-### Analysis History
+---
+
+## 📚 Analysis History
 
 ![History](images/history.png)
 
 ---
 
-## ✨ Features
+# ✨ Features
 
-- PDF and DOCX resume upload
-- Drag-and-drop file selection
-- ATS score calculation
-- Technical skill detection
-- Suggested skill recommendations
-- Strengths and weaknesses analysis
-- Overall resume feedback
-- Resume-to-job matching
-- Matched and missing skill comparison
-- Job match percentage
-- Dashboard statistics and ATS progress chart
-- Searchable analysis history
-- Detailed history view
-- Delete saved analyses
-- Downloadable PDF reports
-- Dark and light themes
-- Responsive interface
-- Loading animations and automatic result scrolling
+- 📄 Upload PDF & DOCX resumes
+- 🎯 ATS Score Calculation
+- 🤖 AI Resume Analysis
+- 🧠 Technical Skill Detection
+- ⭐ Suggested Skills
+- 💡 Resume Improvement Recommendations
+- 📊 Interactive Dashboard
+- 💼 Resume & Job Description Matching
+- 📈 Match Percentage
+- 📂 Analysis History
+- 🔍 Search Previous Analyses
+- 🗑 Delete Saved Analyses
+- 📥 Download PDF Report
+- 🌙 Dark & Light Mode
+- 📱 Fully Responsive Design
+- 📂 Drag & Drop Upload
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Tech Stack
 
 ### Frontend
 
@@ -106,55 +114,44 @@ ResumeIQ analyzes PDF and DOCX resumes, calculates ATS scores, detects technical
 
 ---
 
-## 📄 Application Pages
+# 📄 Application Pages
 
 ### Resume Analyzer
 
-Upload a PDF or DOCX resume to receive:
-
-- ATS score
-- Detected skills
-- Suggested skills
-- Overall feedback
-- Improvement recommendations
-- Downloadable PDF report
+- ATS Score
+- Technical Skills
+- Suggested Skills
+- Resume Feedback
+- Improvement Recommendations
+- PDF Report Export
 
 ### Job Matcher
 
-Upload a resume and paste a job description to receive:
-
-- Match percentage
-- Required skills
-- Matched skills
-- Missing skills
-- Role-specific recommendations
+- Match Percentage
+- Matched Skills
+- Missing Skills
+- Personalized Recommendations
 
 ### Dashboard
 
-View:
-
-- Total analyses
-- Average ATS score
-- Best ATS score
-- Latest analysis
-- ATS progress chart
-- Recent analyses
+- Total Analyses
+- Average ATS Score
+- Best ATS Score
+- ATS Analytics
+- Recent Analyses
 
 ### Analysis History
 
-Users can:
-
-- Search analyses by filename
-- View detailed analysis results
-- Review strengths and weaknesses
-- Review detected skills
-- Delete saved analyses
+- Search Analyses
+- View Details
+- Delete Analyses
+- Review Previous Scores
 
 ---
 
-## ⚙️ Run Locally
+# ⚙️ Run Locally
 
-### Backend
+## Backend
 
 ```bash
 cd backend
@@ -164,17 +161,17 @@ python -m uvicorn app.main:app --reload
 
 Backend:
 
-```text
+```
 http://127.0.0.1:8000
 ```
 
-API documentation:
+Swagger UI:
 
-```text
+```
 http://127.0.0.1:8000/docs
 ```
 
-### Frontend
+## Frontend
 
 ```bash
 cd frontend
@@ -184,66 +181,26 @@ npm run dev
 
 Frontend:
 
-```text
+```
 http://localhost:5173
 ```
 
 ---
 
-## 📂 Project Structure
+# 🔮 Future Improvements
 
-```text
-ResumeIQ
-├── backend
-│   ├── app
-│   │   ├── api
-│   │   ├── core
-│   │   ├── models
-│   │   ├── services
-│   │   └── main.py
-│   └── requirements.txt
-├── frontend
-│   ├── src
-│   │   ├── assets
-│   │   ├── components
-│   │   ├── pages
-│   │   └── services
-│   └── package.json
-├── images
-│   ├── hero-office.png
-│   ├── hero.png
-│   ├── dashboard.png
-│   ├── resume-analyzer.png
-│   ├── job-matcher.png
-│   └── history.png
-└── README.md
-```
+- User Authentication
+- PostgreSQL Integration
+- AI Resume Rewriter
+- OpenAI Resume Suggestions
+- Cover Letter Generator
+- Multi-language Support
+- Cloud Storage
+- Recruiter Dashboard
 
 ---
 
-## 📌 Current Limitations
-
-- Skill extraction is based on a predefined technical skill list.
-- ATS scoring is rule-based rather than powered by a large language model.
-- SQLite data may be reset on a free Render deployment.
-- User authentication is not included yet.
-
----
-
-## 🔮 Future Improvements
-
-- PostgreSQL integration
-- User authentication
-- Individual user histories
-- AI-powered resume rewriting
-- Cover letter generation
-- Multilingual resume analysis
-- Cloud file storage
-- Recruiter dashboard
-
----
-
-## 👩‍💻 Author
+# 👩‍💻 Author
 
 **Zeynep Zişan Ay**
 
@@ -252,6 +209,6 @@ ResumeIQ
 
 ---
 
-⭐ If you found this project useful, consider giving it a star.
+⭐ If you found this project helpful, consider giving it a **Star** on GitHub.
 
-Built with React, FastAPI and Python.
+Built with ❤️ using **React**, **FastAPI**, and **Python**.
